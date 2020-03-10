@@ -26,7 +26,8 @@ password = password.replace('password:','')
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ssh.connect(hostname=hostname,port=port,username=username, password=password)
-stdin, stdout, stderr = ssh.exec_command('vmstat')
+command = "vmstat -s | awk  ' $0 ~ /total memory/ {total=$1 } $0 ~/free memory/ {free=$1} $0 ~/buffer memory/ {buffer=$1} $0 ~/cache/ {cache=$1} END{print (total-free-buffer-cache)/total*100}'"
+stdin, stdout, stderr = ssh.exec_command(command)
 
 print('Connected to',hostname)
 
@@ -35,7 +36,6 @@ output = ""
 
 for line in stdout:
     output=output+line
-print(output)
 
 print('Saving to the text file into logs folder')
 
@@ -44,10 +44,14 @@ time = datetime.datetime.now().time()
 
 file_name = 'logs/' + str(today) + '.txt'
 f = open(file_name, 'a+')
+f.write('============================')
+f.write("\n")
 f.write('log created: ')
 f.write(str(time))
 f.write("\n")
+f.write("RAM usage in percent: ")
 f.write(output)
+
 f.close()
 
 
