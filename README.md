@@ -1,6 +1,6 @@
 # ServerInfo
 
-ServerInfo is a tool to resource monitor and server status based on linux OS.
+ServerInfo is a tool to resource monitor and server status based on Linux OS.
 
 ## Installation
 
