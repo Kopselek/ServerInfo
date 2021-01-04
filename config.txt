@@ -1,4 +1,0 @@
-ip:XX.XX.XXX.XXX
-login:root
-password:root
-port:22
