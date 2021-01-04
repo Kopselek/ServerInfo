@@ -22,6 +22,8 @@ Program uses library - [paramiko](https://pypi.org/project/paramiko/)
 py ServerInfo.py
 ```
 
+You must enter the data in the config.json file
+
 After starting the program, follow the instructions displayed in the terminal
 
 ## Information

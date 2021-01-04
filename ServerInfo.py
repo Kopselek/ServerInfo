@@ -1,35 +1,27 @@
 import paramiko
 import os
+import json
 import datetime
 from pathlib import Path
 
-Path("logs").mkdir(parents=True, exist_ok=True)
+Path("logs").mkdir(True, True)
 
-data = ''
-with open('config.txt', 'r') as file:
-    data = file.read()
-
-dataList = data.splitlines()
-
-hostname = dataList[0]
-hostname = hostname.replace('ip:','')
-
-port = dataList[3]
-port = port.replace('port:','')
-
-username = dataList[1]
-username = username.replace('login:','')
-
-password = dataList[2]
-password = password.replace('password:','')
+with open('config.json') as json_file:
+    data = json.load(json_file)
+    for d in data:
+        hostname = data['hostname']
+        port = int(data['port'])
+        username = data['username']
+        password = data['password']
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect(hostname=hostname,port=port,username=username, password=password)
+print("Connecting to " + hostname + ":" + port)
+ssh.connect(hostname, port, username, password)
 command = "vmstat -s | awk  ' $0 ~ /total memory/ {total=$1 } $0 ~/free memory/ {free=$1} $0 ~/buffer memory/ {buffer=$1} $0 ~/cache/ {cache=$1} END{print (total-free-buffer-cache)/total*100}'"
 stdin, stdout, stderr = ssh.exec_command(command)
 
-print('Connected to',hostname)
+print('Connected to - ', hostname)
 
 stdout = stdout.readlines()
 output = ""
@@ -51,8 +43,7 @@ f.write(str(time))
 f.write("\n")
 f.write("RAM usage in percent: ")
 f.write(output)
-
 f.close()
 
-
+print("Saved")
 quit()
